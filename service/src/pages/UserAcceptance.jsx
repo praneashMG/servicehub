@@ -89,8 +89,8 @@ ${completeUrl}`;
   const handleAccept = async () => {
     setActionLoading(true);
     try {
-      await api.put(`/bookings/${bookingId}/user-status`, { status: 'User Accepted' });
-      setBooking({ ...booking, status: 'User Accepted' });
+      await api.put(`/bookings/${bookingId}/user-status`, { status: 'Assigned' });
+      setBooking({ ...booking, status: 'Assigned' });
       setShowPaymentSelection(true);
     } catch (err) {
       toast.error("Failed to accept booking");
