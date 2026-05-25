@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../services/api';
 import {
   Mail, 
   Lock, 
@@ -73,25 +74,18 @@ const Login = () => {
     setLoading(true);
     
     try {
-      const response = await fetch('http://https://servicehub-sknv.onrender.com/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        }),
+      const response = await api.post('/auth/login', {
+        email: formData.email,
+        password: formData.password
       });
 
-      const data = await response.json();
+      const data = response.data;
 
-      if (response.ok) {
-        if (rememberMe) {
-          localStorage.setItem('rememberedEmail', formData.email);
-        } else {
-          localStorage.removeItem('rememberedEmail');
-        }
+      if (rememberMe) {
+        localStorage.setItem('rememberedEmail', formData.email);
+      } else {
+        localStorage.removeItem('rememberedEmail');
+      }
         
         login(data, data.token);
         
@@ -102,12 +96,9 @@ const Login = () => {
         } else {
           navigate('/');
         }
-      } else {
-        toast.error(data.message || 'Invalid credentials. Please try again.');
-      }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error('Failed to connect to the server. Please try again later.');
+      // Let api.interceptors handle the specific error toast
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../services/api';
 import {
   Mail, 
   Lock, 
@@ -112,32 +113,18 @@ const Register = () => {
 
     setLoading(true);
     
-    setLoading(true);
-    
     try {
-      const response = await fetch('http://https://servicehub-sknv.onrender.com/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password
-        }),
+      const response = await api.post('/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success('Account provisioned successfully! Please sign in.');
-        navigate('/login');
-      } else {
-        toast.error(data.message || 'Registration failed. Please try again.');
-      }
+      toast.success('Account provisioned successfully! Please sign in.');
+      navigate('/login');
     } catch (error) {
       console.error('Registration error:', error);
-      toast.error('Failed to connect to the server. Please try again later.');
+      // Let api.interceptors handle the specific error toast
     } finally {
       setLoading(false);
     }
