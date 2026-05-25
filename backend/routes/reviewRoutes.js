@@ -1,0 +1,10 @@
+const express = require("express");
+const router = express.Router();
+const { addReview, getServiceReviews, deleteReview } = require("../controllers/reviewController");
+const { protect } = require("../middleware/authMiddleware");
+
+router.post("/", protect, addReview);
+router.get("/service/:serviceId", getServiceReviews);
+router.delete("/:id", protect, deleteReview);
+
+module.exports = router;
