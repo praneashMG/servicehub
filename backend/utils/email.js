@@ -4,7 +4,6 @@ const sendEmail = async (options) => {
   try {
     let transporter;
 
-    // Use real SMTP if credentials exist in .env
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
       transporter = nodemailer.createTransport({
         service: 'gmail', // Or 'SendGrid', 'Mailgun', etc. depending on provider
@@ -14,17 +13,8 @@ const sendEmail = async (options) => {
         },
       });
     } else {
-      // Fallback to Ethereal Test Account
-      const testAccount = await nodemailer.createTestAccount();
-      transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass,
-        },
-      });
+      console.log("No SMTP credentials found. Skipping email sending.");
+      return;
     }
 
     const mailOptions = {
