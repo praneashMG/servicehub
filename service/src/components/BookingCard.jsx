@@ -6,7 +6,8 @@ const BookingCard = ({ booking, onCancel }) => {
       case 'Pending': 
       case 'Payment Pending': return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
       case 'Confirmed': 
-      case 'Assigned': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'Assigned': 
+      case 'Payment Submitted': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'Completed': 
       case 'Paid':
       case 'Payment Verified': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
@@ -19,7 +20,7 @@ const BookingCard = ({ booking, onCancel }) => {
     const s = status || '';
     if (s === 'Pending') return 0;
     if (s === 'Confirmed') return 1;
-    if (s === 'Assigned' || s === 'User Accepted' || s === 'Payment Pending') return 2;
+    if (s === 'Assigned' || s === 'User Accepted' || s === 'Payment Pending' || s === 'Payment Submitted') return 2;
     if (s === 'Completed' || s === 'Paid' || s === 'Payment Verified') return 3;
     return -1; // Cancelled or unknown
   };
