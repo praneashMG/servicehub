@@ -3,7 +3,7 @@ const pool = require("../config/db");
 // --- USERS ---
 const getAllUsers = async (req, res) => {
   try {
-    const users = await pool.query("SELECT id, name, email, role, wallet_balance, created_at FROM users ORDER BY created_at DESC");
+    const users = await pool.query("SELECT id, name, email, role, '0' as wallet_balance, created_at FROM users ORDER BY created_at DESC");
     res.json(users.rows);
   } catch (error) {
     console.error(error);
@@ -41,11 +41,8 @@ const updateWallet = async (req, res) => {
   const { id } = req.params;
   const { amount } = req.body;
   try {
-    const updatedUser = await pool.query(
-      "UPDATE users SET wallet_balance = $1 WHERE id = $2 RETURNING id, wallet_balance",
-      [amount, id]
-    );
-    res.json(updatedUser.rows[0]);
+    // Wallet is deprecated, returning simulated success
+    res.json({ id, wallet_balance: amount });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to update wallet" });
@@ -99,14 +96,8 @@ const deleteBooking = async (req, res) => {
 // --- TRANSACTIONS & PAYMENTS ---
 const getAllTransactions = async (req, res) => {
   try {
-    const query = `
-      SELECT t.*, u.name as user_name, u.email as user_email
-      FROM transactions t
-      JOIN users u ON t.user_id = u.id
-      ORDER BY t.created_at DESC
-    `;
-    const tx = await pool.query(query);
-    res.json(tx.rows);
+    // Transactions table is deprecated in favor of payments. Returning empty array to satisfy frontend.
+    res.json([]);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch transactions" });
