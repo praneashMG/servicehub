@@ -3,12 +3,25 @@ import { MapPin, Phone, Calendar, Clock, DollarSign } from "lucide-react";
 const BookingCard = ({ booking, onCancel }) => {
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Pending': return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
-      case 'Confirmed': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'Completed': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+      case 'Pending': 
+      case 'Payment Pending': return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+      case 'Confirmed': 
+      case 'Assigned': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'Completed': 
+      case 'Paid':
+      case 'Payment Verified': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
       case 'Cancelled': return 'bg-red-500/20 text-red-400 border-red-500/30';
       default: return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
     }
+  };
+
+  const getProgressLevel = (status) => {
+    const s = status || '';
+    if (s === 'Pending') return 0;
+    if (s === 'Confirmed') return 1;
+    if (s === 'Assigned' || s === 'User Accepted' || s === 'Payment Pending') return 2;
+    if (s === 'Completed' || s === 'Paid' || s === 'Payment Verified') return 3;
+    return -1; // Cancelled or unknown
   };
 
   const formatDate = (dateString) => {
@@ -74,19 +87,15 @@ const BookingCard = ({ booking, onCancel }) => {
               <div 
                 className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-cyan-500 rounded-full transition-all duration-1000"
                 style={{
-                  width: booking.status === 'Pending' ? '0%' : 
-                         booking.status === 'Confirmed' ? '33.3%' : 
-                         booking.status === 'Assigned' ? '66.6%' : 
-                         booking.status === 'Completed' ? '100%' : '0%'
+                  width: getProgressLevel(booking.status) === 0 ? '0%' : 
+                         getProgressLevel(booking.status) === 1 ? '33.3%' : 
+                         getProgressLevel(booking.status) === 2 ? '66.6%' : 
+                         getProgressLevel(booking.status) === 3 ? '100%' : '0%'
                 }}
               ></div>
 
               {['Pending', 'Confirmed', 'Assigned', 'Completed'].map((step, idx) => {
-                const isActive = 
-                  (booking.status === step) ||
-                  (booking.status === 'Confirmed' && idx <= 1) ||
-                  (booking.status === 'Assigned' && idx <= 2) ||
-                  (booking.status === 'Completed');
+                const isActive = getProgressLevel(booking.status) >= idx;
                   
                 return (
                   <div key={step} className="relative z-10 flex flex-col items-center gap-2 group">
