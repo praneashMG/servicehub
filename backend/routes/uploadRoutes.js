@@ -12,7 +12,7 @@ router.post("/", upload.single("image"), (req, res) => {
     let imageUrl = req.file.path;
     if (!imageUrl.startsWith('http')) {
       // Local storage fallback
-      imageUrl = `http://https://servicehub-sknv.onrender.com/uploads/${req.file.filename}`;
+      imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
     }
 
     res.json({ url: imageUrl });
