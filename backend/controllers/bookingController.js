@@ -25,15 +25,8 @@ const createBooking = async (req, res) => {
       [userId, serviceId, bookingDate, address, phone_number, notes, preferred_time, 'Pending', payment_timing || 'Before Service', null]
     );
 
-    // Create transaction and deduct wallet
-    await client.query(
-      "INSERT INTO transactions (user_id, booking_id, service_name, amount, type, status) VALUES ($1, $2, $3, $4, $5, $6)",
-      [userId, newBooking.rows[0].id, service.title, service.price, 'debit', 'Completed']
-    );
-    await client.query(
-      "UPDATE users SET wallet_balance = wallet_balance - $1 WHERE id = $2",
-      [service.price, userId]
-    );
+    // Payment logic is now handled via the /api/payments routes and payments table.
+    // We simply commit the new booking.
 
     await client.query('COMMIT');
     client.release();
